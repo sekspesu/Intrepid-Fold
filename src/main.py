@@ -71,6 +71,7 @@ async def run_pipeline(dry_run: bool = False):
     from src.scrapers.youtube_scraper import scrape_youtube
     from src.scrapers.news_scraper import scrape_news
     from src.scrapers.onchain_scraper import scrape_onchain
+    from src.scrapers.whale_scraper import scrape_whales
 
     # Run all scrapers in parallel
     (
@@ -81,6 +82,7 @@ async def run_pipeline(dry_run: bool = False):
         youtube_data,
         news_data,
         onchain_data,
+        whale_data,
     ) = await asyncio.gather(
         scrape_price_data(),
         scrape_fear_greed(),
@@ -89,6 +91,7 @@ async def run_pipeline(dry_run: bool = False):
         scrape_youtube(),
         scrape_news(),
         scrape_onchain(),
+        scrape_whales(),
     )
 
     scraped_data = {
@@ -99,6 +102,7 @@ async def run_pipeline(dry_run: bool = False):
         "youtube": youtube_data,
         "news": news_data,
         "onchain": onchain_data,
+        "whales": whale_data,
     }
 
     logger.info("\n✅ Data collection complete!")
@@ -136,6 +140,7 @@ async def run_pipeline(dry_run: bool = False):
         ai_analysis=ai_analysis,
         fear_greed_data=fear_greed_data,
         onchain_data=onchain_data,
+        whale_data=whale_data,
         price_data=price_data,
     )
 

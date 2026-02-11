@@ -54,6 +54,7 @@ def format_prediction_message(prediction: dict) -> str:
     signal_emojis = {
         "technical": "📊",
         "onchain": "🔗",
+        "whales": "🐋",
         "news": "📰",
         "social": "📱",
         "fear_greed": "😱",

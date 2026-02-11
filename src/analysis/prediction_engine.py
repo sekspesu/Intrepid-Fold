@@ -78,20 +78,46 @@ def _onchain_to_score(onchain_data: dict) -> float:
     return round(sum(scores) / max(len(scores), 1), 3)
 
 
+def _whale_to_score(whale_data: dict) -> float:
+    """Convert whale activity to a sentiment score.
+    
+    Whales accumulating = bullish, distributing = bearish.
+    """
+    flow = whale_data.get("flow_direction", "neutral")
+    net_sol = whale_data.get("net_flow_sol", 0)
+
+    if flow == "accumulating":
+        # Scale by size: >5000 SOL = strong signal
+        if abs(net_sol) > 5000:
+            return 0.8
+        elif abs(net_sol) > 1000:
+            return 0.5
+        return 0.3
+    elif flow == "distributing":
+        if abs(net_sol) > 5000:
+            return -0.8
+        elif abs(net_sol) > 1000:
+            return -0.5
+        return -0.3
+    return 0.0
+
+
 def generate_prediction(
     technical_result: dict,
     ai_analysis: dict,
     fear_greed_data: dict,
     onchain_data: dict,
+    whale_data: dict,
     price_data: dict,
 ) -> dict[str, Any]:
     """Generate the final LONG/SHORT/NEUTRAL prediction with confidence.
     
     Combines all signals using configured weights:
-    - Technical Analysis: 30%
-    - On-Chain Data: 20%
-    - News Sentiment: 18%
-    - Social Sentiment: 15%
+    - Technical Analysis: 25%
+    - On-Chain Data: 17%
+    - Whale Activity: 13%
+    - News Sentiment: 15%
+    - Social Sentiment: 13%
     - Fear & Greed: 10%
     - YouTube Analysts: 7%
     """
@@ -104,6 +130,9 @@ def generate_prediction(
         ),
         "onchain": _normalize_score(
             _onchain_to_score(onchain_data)
+        ),
+        "whales": _normalize_score(
+            _whale_to_score(whale_data)
         ),
         "news": _normalize_score(
             ai_analysis.get("news_sentiment", {}).get("sentiment_score")
@@ -170,7 +199,7 @@ def generate_prediction(
         contribution = round(score * weight, 3)
         signal_dir = "bullish" if score > 0 else "bearish" if score < 0 else "neutral"
 
-        detail = _get_factor_description(key, score, technical_result, ai_analysis, fear_greed_data, onchain_data)
+        detail = _get_factor_description(key, score, technical_result, ai_analysis, fear_greed_data, onchain_data, whale_data)
         factor_details.append({
             "source": key,
             "score": round(score, 3),
@@ -217,6 +246,7 @@ def _get_factor_description(
     key: str, score: float,
     technical: dict, ai_analysis: dict,
     fear_greed: dict, onchain: dict,
+    whale_data: Optional[dict] = None,
 ) -> str:
     """Generate human-readable description for each factor."""
     direction = "bullish" if score > 0 else "bearish" if score < 0 else "neutral"
@@ -247,5 +277,12 @@ def _get_factor_description(
     elif key == "youtube":
         count = ai_analysis.get("youtube_sentiment", {}).get("videos_analyzed", 0)
         return f"YouTube {direction} — {count} analyst videos analyzed"
+
+    elif key == "whales":
+        wd = whale_data or {}
+        net = wd.get("net_flow_sol", 0)
+        flow = wd.get("flow_direction", "unknown")
+        count = wd.get("transfers_found", 0)
+        return f"Whales {flow} — Net flow: {net:+,.0f} SOL ({count} large transfers)"
 
     return f"{key}: {direction} (score: {score:.3f})"

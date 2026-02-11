@@ -31,6 +31,10 @@ COINGECKO_API_KEY = os.getenv("COINGECKO_API_KEY", "")
 WEBSHARE_USERNAME = os.getenv("WEBSHARE_USERNAME", "")
 WEBSHARE_PASSWORD = os.getenv("WEBSHARE_PASSWORD", "")
 
+HELIUS_API_KEY = os.getenv("HELIUS_API_KEY", "")
+HELIUS_RPC_URL = f"https://mainnet.helius-rpc.com/?api-key={HELIUS_API_KEY}" if HELIUS_API_KEY else ""
+HELIUS_API_URL = f"https://api-mainnet.helius-rpc.com" if HELIUS_API_KEY else ""
+
 # ============================================
 # Bot Settings
 # ============================================
@@ -137,6 +141,20 @@ DEXSCREENER_CHAIN = "solana"
 DEFILLAMA_BASE_URL = "https://api.llama.fi"
 DEFILLAMA_CHAIN = "Solana"
 
+# --- Helius / Whale Tracking ---
+WHALE_MIN_SOL = 500   # Minimum SOL for a transfer to be considered "whale"
+WHALE_WALLETS = {
+    # Major Solana ecosystem wallets & known large holders
+    "Binance Hot":     "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+    "Kraken":          "FWznbcNXWQuHTawe9RxvQ2LdCENssh12dsznf4RiouN5",
+    "Jump Trading":    "CuieVDEDCyQ6pU2nPmXGUGrCMHsYti7RiR7wJTmXMjna",
+    "Wintermute":      "DBD8hAwLDRQkTsu6EqviaYNGKPnsAMmQonBAP897Mb4e",
+    "Alameda Legacy":  "ASTyfSima4LBGH7wCYWEqBXLaHgyMriXFz4KJEPzAxs5",
+    "Whale 1":         "HN7cABqLq46Es1jh92dQQisAq662SmxELLLsHHe4YWrH",
+    "Whale 2":         "BBNM45Mfp9G1S2dicBBoJJFt3JisKxBcZ1HEqFZWukmH",
+    "Whale 3":         "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9",
+}
+
 # ============================================
 # Analysis Configuration
 # ============================================
@@ -153,12 +171,13 @@ TA_EMA_MEDIUM = 21
 TA_EMA_LONG = 50
 TA_EMA_VERY_LONG = 200
 
-# Signal weights for prediction engine
+# Signal weights for prediction engine (must sum to 1.0)
 SIGNAL_WEIGHTS = {
-    "technical":    0.30,   # Price action is most objective
-    "onchain":      0.20,   # Smart money movements lead price
-    "news":         0.18,   # Major news catalysts drive volatility
-    "social":       0.15,   # Crowd sentiment (confirming/contrarian)
+    "technical":    0.25,   # Price action is most objective
+    "onchain":      0.17,   # DEX volume & TVL trends
+    "whales":       0.13,   # Smart money whale movements
+    "news":         0.15,   # Major news catalysts
+    "social":       0.13,   # Crowd sentiment (confirming/contrarian)
     "fear_greed":   0.10,   # Macro market mood
     "youtube":      0.07,   # Expert opinion supplement
 }
