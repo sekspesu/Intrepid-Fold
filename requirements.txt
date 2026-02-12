@@ -23,3 +23,6 @@ python-telegram-bot>=21.0
 # Utilities
 requests>=2.31.0
 pytz>=2024.1
+
+# Dashboard
+flask>=3.0.0

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Mood Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Background Grid -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <span class="logo-icon">◎</span>
+                <h1>Solana Mood Tracker</h1>
+            </div>
+            <span class="badge badge-live" id="statusBadge">IDLE</span>
+        </div>
+        <div class="header-right">
+            <span class="last-run" id="lastRun">No runs yet</span>
+            <button class="btn-trigger" id="triggerBtn" onclick="triggerAnalysis()">
+                <span class="btn-icon">⚡</span>
+                <span class="btn-text">Run Analysis</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Quick Stats Bar -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stat-card" id="priceCard">
+            <div class="stat-label">SOL Price</div>
+            <div class="stat-value" id="solPrice">—</div>
+            <div class="stat-change" id="solChange">—</div>
+        </div>
+        <div class="stat-card" id="fgCard">
+            <div class="stat-label">Fear & Greed</div>
+            <div class="stat-value" id="fgValue">—</div>
+            <div class="stat-change" id="fgClass">—</div>
+        </div>
+        <div class="stat-card" id="signalCard">
+            <div class="stat-label">Signal</div>
+            <div class="stat-value" id="signalDir">—</div>
+            <div class="stat-change" id="signalConf">—</div>
+        </div>
+        <div class="stat-card" id="accuracyCard">
+            <div class="stat-label">Accuracy</div>
+            <div class="stat-value" id="accuracyVal">—</div>
+            <div class="stat-change" id="accuracyCount">—</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Signal Breakdown Panel -->
+        <section class="panel signal-panel" id="signalPanel">
+            <div class="panel-header">
+                <h2>Signal Breakdown</h2>
+                <span class="panel-badge" id="signalStrength">—</span>
+            </div>
+            <div class="signal-meter" id="signalMeter">
+                <div class="meter-labels">
+                    <span>SHORT</span>
+                    <span>NEUTRAL</span>
+                    <span>LONG</span>
+                </div>
+                <div class="meter-track">
+                    <div class="meter-fill" id="meterFill"></div>
+                    <div class="meter-needle" id="meterNeedle"></div>
+                </div>
+            </div>
+            <div class="signal-bars" id="signalBars">
+                <!-- Populated by JS -->
+                <div class="signal-placeholder">Run analysis to see signal breakdown</div>
+            </div>
+        </section>
+
+        <!-- Key Factors Panel -->
+        <section class="panel factors-panel" id="factorsPanel">
+            <div class="panel-header">
+                <h2>Key Factors</h2>
+            </div>
+            <div class="factors-list" id="factorsList">
+                <div class="signal-placeholder">Waiting for analysis...</div>
+            </div>
+        </section>
+
+        <!-- Prediction History -->
+        <section class="panel history-panel">
+            <div class="panel-header">
+                <h2>Prediction History</h2>
+                <span class="panel-badge" id="historyCount">0</span>
+            </div>
+            <div class="history-table-wrap">
+                <table class="history-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>Signal</th>
+                            <th>Price</th>
+                            <th>Confidence</th>
+                            <th>Score</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr><td colspan="7" class="empty-row">No predictions yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Running Overlay -->
+    <div class="running-overlay" id="runningOverlay">
+        <div class="running-modal">
+            <div class="spinner"></div>
+            <h3>Analysis Running...</h3>
+            <p id="runningStatus">Collecting data from all sources</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
